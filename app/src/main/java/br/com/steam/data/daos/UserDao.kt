@@ -5,6 +5,7 @@ import br.com.steam.data.models.UserSteam
 import br.com.steam.data.models.UserWithGames
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

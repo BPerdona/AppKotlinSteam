@@ -3,26 +3,54 @@ package br.com.steam
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import br.com.steam.data.models.UserSteam
 import br.com.steam.ui.theme.SteamTheme
+import br.com.steam.views.category.CategoriesScreen
+import br.com.steam.views.game.GamesScreen
+import br.com.steam.views.user.SaveEditUser
+import br.com.steam.views.user.UserScreen
+import br.com.steam.views.user.UserSteamViewModeFactory
+import br.com.steam.views.user.UserViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val userSteamViewModel: UserViewModel by viewModels<UserViewModel>{
+            UserSteamViewModeFactory(
+                (this.applicationContext as SteamApplication).steamDatabase.userSteamDao()
+            )
+        }
         setContent {
             SteamTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
+                    SteamApp(
+                        userSteamViewModel
+                    )
                 }
             }
         }
@@ -30,14 +58,83 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun SteamApp(
+    userViewModel: UserViewModel
+) {
+    val navController = rememberNavController()
+    Scaffold(
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.height(80.dp)
+            ) {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                bottomNavScreens.forEach{ botNavScreen ->
+                    BottomNavigationItem(
+                        icon ={ Icon(
+                            modifier = Modifier.size(50.dp),
+                            painter = painterResource(id = botNavScreen.icon),
+                            contentDescription = stringResource(id = botNavScreen.name)
+                        )},
+                        label = { Text(text = stringResource(id = botNavScreen.name))},
+                        selected = currentDestination?.hierarchy?.any{
+                            it.route == botNavScreen.route
+                        } == true,
+                        onClick = {
+                            navController.navigate(botNavScreen.route){
+                                popUpTo(navController.graph.startDestinationId){
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    ) {
+        NavHost(
+            modifier = Modifier.padding(it),
+            navController = navController,
+            startDestination = Screen.UsersScreen.route
+        ){
+            composable(Screen.CategoriesScreen.route){
+               CategoriesScreen()
+            }
+            composable(Screen.GamesScreen.route){
+                GamesScreen()
+            }
+            composable(Screen.UsersScreen.route){
+                UserScreen(userViewModel, navController)
+            }
+            composable(
+                route = "users/{userId}",
+                arguments = listOf(navArgument("userId"){
+                    defaultValue = -1
+                    type = NavType.IntType
+                })
+            ){
+                val userId = it.arguments?.getInt("userId") ?: -1
+                val user = userViewModel.getUser(userId)
+                SaveEditUser(user)
+            }
+        }
+    }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    SteamTheme {
-        Greeting("Android")
-    }
+private val bottomNavScreens = listOf(
+    Screen.CategoriesScreen,
+    Screen.GamesScreen,
+    Screen.UsersScreen
+)
+
+sealed class Screen(
+    val route: String,
+    @DrawableRes val icon: Int,
+    @StringRes val name: Int,
+){
+    object CategoriesScreen: Screen("categories", R.drawable.ic_launcher_background, R.string.categories)
+    object GamesScreen: Screen("games", R.drawable.ic_launcher_background, R.string.games)
+    object UsersScreen: Screen("users", R.drawable.ic_launcher_background, R.string.users)
 }

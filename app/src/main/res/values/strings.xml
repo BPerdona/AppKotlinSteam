@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Steam</string>
+    <string name="categories">categories</string>
+    <string name="games">games</string>
+    <string name="users">users</string>
+    <string name="initial">initial</string>
 </resources>

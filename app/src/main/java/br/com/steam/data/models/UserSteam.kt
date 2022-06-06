@@ -9,6 +9,6 @@ data class UserSteam(
     val userId: Int = 0,
     val nickName: String,
     val bio: String,
-    val timeInGame: Float,
+    val timeInGame: Double,
     val level: Int
 )

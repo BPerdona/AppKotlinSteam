@@ -5,5 +5,5 @@ import androidx.room.Entity
 @Entity(primaryKeys = ["userId","gameId"])
 data class GameUserCrossRef(
     val userId: Int,
-    val songId: Int
+    val gameId: Int
 )
