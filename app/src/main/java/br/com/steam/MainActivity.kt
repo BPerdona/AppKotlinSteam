@@ -28,10 +28,7 @@ import br.com.steam.data.models.UserSteam
 import br.com.steam.ui.theme.SteamTheme
 import br.com.steam.views.category.CategoriesScreen
 import br.com.steam.views.game.GamesScreen
-import br.com.steam.views.user.SaveEditUser
-import br.com.steam.views.user.UserScreen
-import br.com.steam.views.user.UserSteamViewModeFactory
-import br.com.steam.views.user.UserViewModel
+import br.com.steam.views.user.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +39,8 @@ class MainActivity : ComponentActivity() {
                 (this.applicationContext as SteamApplication).steamDatabase.userSteamDao()
             )
         }
+        val saveEditUserViewModel: SaveEditUserViewModel by viewModels()
+        saveEditUserViewModel.setIndex(userSteamViewModel.getLastIndex())
         setContent {
             SteamTheme {
                 Surface(
@@ -49,7 +48,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     SteamApp(
-                        userSteamViewModel
+                        userSteamViewModel,
+                        saveEditUserViewModel
                     )
                 }
             }
@@ -59,7 +59,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun SteamApp(
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    saveEditUserViewModel: SaveEditUserViewModel
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -117,7 +118,12 @@ fun SteamApp(
             ){
                 val userId = it.arguments?.getInt("userId") ?: -1
                 val user = userViewModel.getUser(userId)
-                SaveEditUser(user)
+                SaveEditUser(
+                    user,
+                    userViewModel,
+                    navController,
+                    saveEditUserViewModel
+                )
             }
         }
     }

@@ -44,6 +44,10 @@ class UserViewModel(private val dao: UserDao): ViewModel(){
             0
         )
     }
+
+    fun getLastIndex(): Int{
+        return allUsers.value?.get(allUsers.value?.size?:0)?.userId?:0
+    }
 }
 
 class UserSteamViewModeFactory(private val dao: UserDao) : ViewModelProvider.Factory{
