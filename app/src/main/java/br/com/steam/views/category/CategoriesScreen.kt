@@ -34,7 +34,7 @@ fun CategoriesScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                navController.navigate("users/-1")
+                navController.navigate("categories/-1")
             }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Category")
             }

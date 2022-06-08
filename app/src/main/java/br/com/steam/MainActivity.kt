@@ -27,9 +27,7 @@ import androidx.navigation.navArgument
 import br.com.steam.data.models.Category
 import br.com.steam.data.models.UserSteam
 import br.com.steam.ui.theme.SteamTheme
-import br.com.steam.views.category.CategoriesScreen
-import br.com.steam.views.category.CategoriesViewModel
-import br.com.steam.views.category.CategoryViewModelFactory
+import br.com.steam.views.category.*
 import br.com.steam.views.game.GamesScreen
 import br.com.steam.views.user.*
 
@@ -37,6 +35,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //User
         val userSteamViewModel: UserViewModel by viewModels<UserViewModel>{
             UserSteamViewModeFactory(
                 (this.applicationContext as SteamApplication).steamDatabase.userSteamDao()
@@ -45,11 +44,17 @@ class MainActivity : ComponentActivity() {
         val saveEditUserViewModel: SaveEditUserViewModel by viewModels()
         saveEditUserViewModel.setIndex(userSteamViewModel.getLastIndex())
 
+        //Category
         val categoriesViewModel: CategoriesViewModel by viewModels<CategoriesViewModel>{
             CategoryViewModelFactory(
                 (this.applicationContext as SteamApplication).steamDatabase.categoryDao()
             )
         }
+        val saveEditCategoriesViewModel: SaveEditCategoriesViewModel by viewModels()
+        saveEditCategoriesViewModel.setIndex(categoriesViewModel.getLastIndex())
+
+        //Game
+
         //TODO
         setContent {
             SteamTheme {
@@ -61,6 +66,7 @@ class MainActivity : ComponentActivity() {
                         userSteamViewModel,
                         saveEditUserViewModel,
                         categoriesViewModel,
+                        saveEditCategoriesViewModel,
                     )
                 }
             }
@@ -72,7 +78,8 @@ class MainActivity : ComponentActivity() {
 fun SteamApp(
     userViewModel: UserViewModel,
     saveEditUserViewModel: SaveEditUserViewModel,
-    categoriesViewModel: CategoriesViewModel
+    categoriesViewModel: CategoriesViewModel,
+    saveEditCategoriesViewModel: SaveEditCategoriesViewModel
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -135,6 +142,23 @@ fun SteamApp(
                     userViewModel,
                     navController,
                     saveEditUserViewModel
+                )
+            }
+            composable(
+                route = "categories/{categoryId}",
+                arguments = listOf(navArgument("categoryId"){
+                    defaultValue = -1
+                    type = NavType.IntType
+                })
+            ){
+                val category = categoriesViewModel.getCategory(
+                    it.arguments?.getInt("categoryId") ?: -1
+                )
+                SaveEditCategory(
+                    category = category,
+                    categoryViewModel = categoriesViewModel,
+                    navController = navController,
+                    saveEditCategoriesViewModel = saveEditCategoriesViewModel
                 )
             }
         }
