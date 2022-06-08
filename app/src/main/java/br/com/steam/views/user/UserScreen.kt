@@ -121,7 +121,7 @@ fun UserItem(
                 if(expanded){
                     Icon(
                         modifier = Modifier
-                            .padding(1.dp)
+                            .padding(0.dp,0.dp,20.dp,0.dp)
                             .size(32.dp)
                             .clickable { edit() },
                         imageVector = Icons.Default.Edit,

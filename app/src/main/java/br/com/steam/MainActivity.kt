@@ -24,9 +24,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import br.com.steam.data.models.Category
 import br.com.steam.data.models.UserSteam
 import br.com.steam.ui.theme.SteamTheme
 import br.com.steam.views.category.CategoriesScreen
+import br.com.steam.views.category.CategoriesViewModel
+import br.com.steam.views.category.CategoryViewModelFactory
 import br.com.steam.views.game.GamesScreen
 import br.com.steam.views.user.*
 
@@ -41,6 +44,13 @@ class MainActivity : ComponentActivity() {
         }
         val saveEditUserViewModel: SaveEditUserViewModel by viewModels()
         saveEditUserViewModel.setIndex(userSteamViewModel.getLastIndex())
+
+        val categoriesViewModel: CategoriesViewModel by viewModels<CategoriesViewModel>{
+            CategoryViewModelFactory(
+                (this.applicationContext as SteamApplication).steamDatabase.categoryDao()
+            )
+        }
+        //TODO
         setContent {
             SteamTheme {
                 Surface(
@@ -49,7 +59,8 @@ class MainActivity : ComponentActivity() {
                 ) {
                     SteamApp(
                         userSteamViewModel,
-                        saveEditUserViewModel
+                        saveEditUserViewModel,
+                        categoriesViewModel,
                     )
                 }
             }
@@ -60,7 +71,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun SteamApp(
     userViewModel: UserViewModel,
-    saveEditUserViewModel: SaveEditUserViewModel
+    saveEditUserViewModel: SaveEditUserViewModel,
+    categoriesViewModel: CategoriesViewModel
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -101,7 +113,7 @@ fun SteamApp(
             startDestination = Screen.UsersScreen.route
         ){
             composable(Screen.CategoriesScreen.route){
-               CategoriesScreen()
+               CategoriesScreen(categoriesViewModel, navController)
             }
             composable(Screen.GamesScreen.route){
                 GamesScreen()
@@ -140,7 +152,7 @@ sealed class Screen(
     @DrawableRes val icon: Int,
     @StringRes val name: Int,
 ){
-    object CategoriesScreen: Screen("categories", R.drawable.ic_launcher_background, R.string.categories)
-    object GamesScreen: Screen("games", R.drawable.ic_launcher_background, R.string.games)
-    object UsersScreen: Screen("users", R.drawable.ic_launcher_background, R.string.users)
+    object CategoriesScreen: Screen("categories", R.drawable.chart, R.string.categories)
+    object GamesScreen: Screen("games", R.drawable.gamepad, R.string.games)
+    object UsersScreen: Screen("users", R.drawable.user, R.string.users)
 }
