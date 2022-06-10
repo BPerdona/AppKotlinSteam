@@ -45,12 +45,15 @@ fun SaveEditGame(
         saveEditGameViewModel.score.value = game.score
         saveEditGameViewModel.price.value = game.price
         saveEditGameViewModel.gameCategoryId.value = game.gameCategoryId
+        //Controle de categorias
+        val categories by categoriesViewModel.allCategories.observeAsState(listOf())
 
         GameForm(
             saveEditGameViewModel,
             gameViewModel,
             game,
             categoriesViewModel,
+            categories,
         ){
             navController.navigate("games")
         }
@@ -64,15 +67,15 @@ fun GameForm(
     gameViewModel: GameViewModel,
     game: Game,
     categoriesViewModel: CategoriesViewModel,
+    categories: List<Category>,
     navBack: () -> Unit
 ){
+    //Variaveis do form
     val name = saveEditGameViewModel.name.observeAsState()
     val description = saveEditGameViewModel.description.observeAsState()
     val score = saveEditGameViewModel.score.observeAsState()
     val price = saveEditGameViewModel.price.observeAsState()
     val gameCategoryId = saveEditGameViewModel.gameCategoryId.observeAsState()
-
-    val categories by categoriesViewModel.allCategories.observeAsState(listOf())
 
     Column(
         modifier = Modifier.fillMaxHeight(),

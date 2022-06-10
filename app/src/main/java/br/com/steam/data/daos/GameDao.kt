@@ -2,6 +2,7 @@ package br.com.steam.data.daos
 
 import androidx.room.*
 import br.com.steam.data.models.Game
+import br.com.steam.data.models.GameWithCategory
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,4 +19,8 @@ interface GameDao {
 
     @Query("SELECT * FROM game")
     fun getGames(): Flow<List<Game>>
+
+    @Transaction
+    @Query("SELECT * FROM game")
+    fun getGamesWithCategory(): Flow<List<GameWithCategory>>
 }

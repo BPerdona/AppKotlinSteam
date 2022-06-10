@@ -3,12 +3,13 @@ package br.com.steam.views.game
 import androidx.lifecycle.*
 import br.com.steam.data.daos.GameDao
 import br.com.steam.data.models.Game
+import br.com.steam.data.models.GameWithCategory
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class GameViewModel(private val dao: GameDao) : ViewModel(){
 
-    val allGames: LiveData<List<Game>> = dao.getGames().asLiveData()
+    val allGameWithCategory: LiveData<List<GameWithCategory>> = dao.getGamesWithCategory().asLiveData()
 
     fun insert(game: Game){
         viewModelScope.launch {
@@ -29,9 +30,9 @@ class GameViewModel(private val dao: GameDao) : ViewModel(){
     }
 
     fun getGame(id: Int): Game{
-        allGames.value?.forEach{
-            if(id == it.gameId){
-                return it
+        allGameWithCategory.value?.forEach{
+            if(id == it.game.gameId){
+                return it.game
             }
         }
         return Game(
@@ -45,7 +46,7 @@ class GameViewModel(private val dao: GameDao) : ViewModel(){
     }
 
     fun getLastIndex(): Int{
-        return allGames.value?.get(allGames.value?.size?:0)?.gameId?:0
+        return allGameWithCategory.value?.get(allGameWithCategory.value?.size?:0)?.game?.gameId ?: 0
     }
 }
 

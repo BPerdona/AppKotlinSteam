@@ -24,7 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import br.com.steam.data.models.Category
 import br.com.steam.data.models.Game
+import br.com.steam.data.models.GameWithCategory
 import br.com.steam.views.category.CategoriesViewModel
 
 @Composable
@@ -41,23 +43,22 @@ fun GamesScreen(
             }
         }
     ) {
-        val games by gameViewModel.allGames.observeAsState(listOf())
-
+        val gamesWithCategory by gameViewModel.allGameWithCategory.observeAsState(listOf())
         Column() {
-            GameList(games, navController)
+            GameList(gamesWithCategory, navController)
         }
     }
 }
 
 @Composable
 fun GameList(
-    games: List<Game>,
+    gamesWithCategory: List<GameWithCategory>,
     navController: NavController
 ){
     LazyColumn(){
-        items(games){
+        items(gamesWithCategory){
             GameItem(it){
-                navController.navigate("games/${it.gameId}")
+                navController.navigate("games/${it.game.gameId}")
             }
         }
     }
@@ -65,7 +66,7 @@ fun GameList(
 
 @Composable
 fun GameItem(
-    game: Game,
+    gameWithCategory: GameWithCategory,
     toDetail: () -> Unit
 ){
     var expanded by remember { mutableStateOf(false) }
@@ -106,7 +107,7 @@ fun GameItem(
                     contentAlignment = Alignment.Center
                 ){
                     Text(
-                        text = "${game.gameId}",
+                        text = "${gameWithCategory.game.gameId}",
                         style = MaterialTheme.typography.h3
                             .copy(color = Color.White, fontWeight = FontWeight.Normal)
                     )
@@ -115,7 +116,7 @@ fun GameItem(
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .weight(1f),
-                    text = "${game.name}",
+                    text = "${gameWithCategory.game.name}",
                     style = MaterialTheme.typography.h5
                         .copy(color = Color.White ,fontWeight = FontWeight.Bold)
                 )
@@ -149,14 +150,14 @@ fun GameItem(
                             modifier = Modifier
                                 .padding(bottom = 1.dp)
                                 .weight(1f),
-                            text = "ID: ${game.gameId}",
+                            text = "ID: ${gameWithCategory.game.gameId}",
                             style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
                         )
                         Text(
                             modifier = Modifier
                                 .padding(bottom = 5.dp)
                                 .weight(0.9f),
-                            text = "Preço: ${game.price}",
+                            text = "Preço: ${gameWithCategory.game.price}",
                             style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
                             )
                     }
@@ -168,27 +169,74 @@ fun GameItem(
                             modifier = Modifier
                                 .padding(bottom = 1.dp)
                                 .weight(1f),
-                            text = "Nome: ${game.name}",
+                            text = "Nome: ${gameWithCategory.game.name}",
                             style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
                         )
                         Text(
                             modifier = Modifier
                                 .padding(bottom = 5.dp)
                                 .weight(0.9f),
-                            text = "Nota: ${game.score}",
+                            text = "Nota: ${gameWithCategory.game.score}",
                             style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
                         )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Text(
+                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp, end = 10.dp),
+                            text = "Categoria:",
+                            style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
+                        )
+                        CategoryCard(gameWithCategory.category)
                     }
                     Text(
                         text = "Bio:",
                         style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
                     )
                     Text(
-                        text = "${game.description}",
+                        text = "${gameWithCategory.game.description}",
                         style = MaterialTheme.typography.subtitle2.copy(color = Color.LightGray),
                         modifier = Modifier.padding(0.dp,0.dp,0.dp,10.dp)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun CategoryCard(
+    category: Category
+){
+    Card(
+        modifier = Modifier
+            .padding(top = 8.dp, bottom = 8.dp)
+            .background(Color.White)
+    ) {
+        Column() {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.DarkGray)
+                    .padding(4.dp)
+            ) {
+                Text(
+                    text = "${category.name}",
+                    style = MaterialTheme.typography.subtitle2.copy(color = Color.White, fontWeight = FontWeight.Bold)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.DarkGray)
+                    .padding(4.dp)
+            ) {
+                Text(
+                    text = "Descrição: ${category.description}",
+                    style = MaterialTheme.typography.subtitle2.copy(color = Color.LightGray),
+                )
             }
         }
     }
