@@ -186,7 +186,8 @@ fun SteamApp(
                     game,
                     gameViewModel,
                     navController,
-                    saveEditGameViewModel
+                    saveEditGameViewModel,
+                    categoriesViewModel
                 )
             }
         }

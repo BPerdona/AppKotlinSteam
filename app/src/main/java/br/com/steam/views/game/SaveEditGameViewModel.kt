@@ -11,7 +11,7 @@ class SaveEditGameViewModel: ViewModel(){
     val description: MutableLiveData<String> = MutableLiveData()
     val score: MutableLiveData<String> = MutableLiveData()
     val price: MutableLiveData<String> = MutableLiveData()
-    val gameCategoryId: MutableLiveData<Int> = MutableLiveData(2)
+    val gameCategoryId: MutableLiveData<Int> = MutableLiveData()
 
     fun setIndex(index: Int){
         _gameId.value=index
@@ -39,10 +39,11 @@ class SaveEditGameViewModel: ViewModel(){
     }
 
     fun update(
+        id: Int,
         updateGame: (Game) -> Unit
     ){
         val game = Game(
-            _gameId.value?:return,
+            id,
             name.value?:return,
             description.value?:return,
             score.value?:return,

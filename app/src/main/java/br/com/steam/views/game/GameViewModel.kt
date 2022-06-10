@@ -30,7 +30,7 @@ class GameViewModel(private val dao: GameDao) : ViewModel(){
 
     fun getGame(id: Int): Game{
         allGames.value?.forEach{
-            if(id == it.gameCategoryId){
+            if(id == it.gameId){
                 return it
             }
         }
