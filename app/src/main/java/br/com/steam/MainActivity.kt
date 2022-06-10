@@ -25,10 +25,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import br.com.steam.data.models.Category
+import br.com.steam.data.models.Game
 import br.com.steam.data.models.UserSteam
 import br.com.steam.ui.theme.SteamTheme
 import br.com.steam.views.category.*
-import br.com.steam.views.game.GamesScreen
+import br.com.steam.views.game.*
 import br.com.steam.views.user.*
 
 class MainActivity : ComponentActivity() {
@@ -54,8 +55,14 @@ class MainActivity : ComponentActivity() {
         saveEditCategoriesViewModel.setIndex(categoriesViewModel.getLastIndex())
 
         //Game
+        val gameViewModel: GameViewModel by viewModels<GameViewModel> {
+            GameViewModelFactory(
+                (this.applicationContext as SteamApplication).steamDatabase.gameDao()
+            )
+        }
+        val saveEditGameViewModel: SaveEditGameViewModel by viewModels()
+        saveEditGameViewModel.setIndex(gameViewModel.getLastIndex())
 
-        //TODO
         setContent {
             SteamTheme {
                 Surface(
@@ -67,6 +74,8 @@ class MainActivity : ComponentActivity() {
                         saveEditUserViewModel,
                         categoriesViewModel,
                         saveEditCategoriesViewModel,
+                        gameViewModel,
+                        saveEditGameViewModel
                     )
                 }
             }
@@ -79,7 +88,9 @@ fun SteamApp(
     userViewModel: UserViewModel,
     saveEditUserViewModel: SaveEditUserViewModel,
     categoriesViewModel: CategoriesViewModel,
-    saveEditCategoriesViewModel: SaveEditCategoriesViewModel
+    saveEditCategoriesViewModel: SaveEditCategoriesViewModel,
+    gameViewModel: GameViewModel,
+    saveEditGameViewModel: SaveEditGameViewModel
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -123,7 +134,7 @@ fun SteamApp(
                CategoriesScreen(categoriesViewModel, navController)
             }
             composable(Screen.GamesScreen.route){
-                GamesScreen()
+                GamesScreen(gameViewModel, navController)
             }
             composable(Screen.UsersScreen.route){
                 UserScreen(userViewModel, navController)
@@ -159,6 +170,23 @@ fun SteamApp(
                     categoryViewModel = categoriesViewModel,
                     navController = navController,
                     saveEditCategoriesViewModel = saveEditCategoriesViewModel
+                )
+            }
+            composable(
+                route = "games/{gameId}",
+                arguments = listOf(navArgument("gameId"){
+                    defaultValue = -1
+                    type = NavType.IntType
+                })
+            ){
+                val game = gameViewModel.getGame(
+                    it.arguments?.getInt("gameId") ?: -1
+                )
+                SaveEditGame(
+                    game,
+                    gameViewModel,
+                    navController,
+                    saveEditGameViewModel
                 )
             }
         }

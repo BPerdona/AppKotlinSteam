@@ -9,7 +9,7 @@ data class Game(
     val gameId: Int = 0,
     val name: String,
     val description: String,
-    val score: Float,
-    val price: Float,
+    val score: String,
+    val price: String,
     val gameCategoryId: Int
 )

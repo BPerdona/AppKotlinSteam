@@ -30,7 +30,6 @@ class SaveEditCategoriesViewModel : ViewModel(){
     }
 
     fun update(
-        id: Int,
         updateCategory: (Category) -> Unit
     ){
         val category = Category(

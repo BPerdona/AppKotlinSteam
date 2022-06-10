@@ -28,7 +28,7 @@ fun SaveEditCategory(
                 if(category.categoryId == -1){
                     saveEditCategoriesViewModel.insert(categoryViewModel::insert)
                 } else {
-                    saveEditCategoriesViewModel.update(category.categoryId ,categoryViewModel::update)
+                    saveEditCategoriesViewModel.update(categoryViewModel::update)
                 }
                 navController.popBackStack()
             }) {
