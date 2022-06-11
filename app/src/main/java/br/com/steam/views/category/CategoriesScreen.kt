@@ -25,6 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import br.com.steam.data.models.Category
+import br.com.steam.data.models.CategoryWithGames
+import br.com.steam.data.models.Game
 
 @Composable
 fun CategoriesScreen(
@@ -40,7 +42,7 @@ fun CategoriesScreen(
             }
         }
     ) {
-       val categories by categoriesViewModel.allCategories.observeAsState(listOf())
+       val categories by categoriesViewModel.allCategoriesWithGames.observeAsState(listOf())
 
         Column() {
             CategoryList(categories, navController)
@@ -50,13 +52,13 @@ fun CategoriesScreen(
 
 @Composable
 fun CategoryList(
-    categories: List<Category>,
+    categories: List<CategoryWithGames>,
     navController: NavController
 ){
     LazyColumn(){
         items(categories){
-            CategoryItem(it){
-                navController.navigate("categories/${it.categoryId}")
+            CategoryItem(it.category, it.games){
+                navController.navigate("categories/${it.category.categoryId}")
             }
         }
     }
@@ -65,6 +67,7 @@ fun CategoryList(
 @Composable
 fun CategoryItem(
     category: Category,
+    games: List<Game>,
     edit: () -> Unit
 ){
     var expanded by remember { mutableStateOf(false) }
@@ -146,16 +149,19 @@ fun CategoryItem(
                     ) {
                         Text(
                             modifier = Modifier
-                                .padding(bottom = 1.dp)
+                                .padding(bottom = 5.dp)
+                                .weight(1f),
+                            text = "Nome: ${category.name}",
+                            style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(bottom = 5.dp)
                                 .weight(1f),
                             text = "ID: ${category.categoryId}",
                             style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
                         )
                     }
-                    Text(
-                        text = "Nome: ${category.name}",
-                        style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
-                    )
                     Text(
                         text = "Bio:",
                         style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
@@ -165,9 +171,31 @@ fun CategoryItem(
                         style = MaterialTheme.typography.subtitle2.copy(color = Color.LightGray),
                         modifier = Modifier.padding(0.dp,0.dp,0.dp,10.dp)
                     )
-                    //TODO: Adicionar Jogos da Categoria
+                    Text(
+                        modifier = Modifier
+                            .padding(bottom = 8.dp),
+                        text = "Jogos com essa categoria: ",
+                        style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
+                    )
+                    CategoryGames(games = games)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CategoryGames(games: List<Game>){
+    if(games.isNullOrEmpty()){
+        Text(
+            text = "Nenhum jogo cadastrado nessa Categoria!!!",
+            style = MaterialTheme.typography.subtitle2.copy(color = Color.Red, fontWeight = FontWeight.Bold)
+        )
+    }else{
+        games.forEach{
+            Text(
+                text = "- ${it.name}"
+            )
         }
     }
 }

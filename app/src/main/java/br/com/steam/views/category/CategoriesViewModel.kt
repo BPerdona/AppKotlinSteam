@@ -3,12 +3,14 @@ package br.com.steam.views.category
 import androidx.lifecycle.*
 import br.com.steam.data.daos.CategoryDao
 import br.com.steam.data.models.Category
+import br.com.steam.data.models.CategoryWithGames
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class CategoriesViewModel(private val dao: CategoryDao): ViewModel(){
 
     val allCategories: LiveData<List<Category>> = dao.getCategory().asLiveData()
+    val allCategoriesWithGames: LiveData<List<CategoryWithGames>> = dao.getCategoryWithGames().asLiveData()
 
     fun insert(category: Category){
         viewModelScope.launch {
@@ -29,9 +31,9 @@ class CategoriesViewModel(private val dao: CategoryDao): ViewModel(){
     }
 
     fun getCategory(id: Int): Category{
-        allCategories.value?.forEach{
-            if(id == it.categoryId){
-                return it
+        allCategoriesWithGames.value?.forEach{
+            if(id == it.category.categoryId){
+                return it.category
             }
         }
         return Category(
@@ -42,7 +44,7 @@ class CategoriesViewModel(private val dao: CategoryDao): ViewModel(){
     }
 
     fun getLastIndex(): Int{
-        return allCategories.value?.get(allCategories.value?.size?:0)?.categoryId?:0
+        return allCategoriesWithGames.value?.get(allCategoriesWithGames.value?.size?:0)?.category?.categoryId ?: 0
     }
 }
 
