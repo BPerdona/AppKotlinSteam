@@ -1,5 +1,6 @@
 package br.com.steam.views.game
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -95,7 +96,8 @@ fun GameForm(
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedLabelColor = Color.Yellow,
-                    focusedBorderColor = Color.Yellow
+                    focusedBorderColor = Color.Yellow,
+                    backgroundColor = Color.Black
                 ),
                 value = "${name.value}",
                 onValueChange = {
@@ -111,7 +113,8 @@ fun GameForm(
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedLabelColor = Color.Yellow,
-                    focusedBorderColor = Color.Yellow
+                    focusedBorderColor = Color.Yellow,
+                    backgroundColor = Color.Black
                 ),
                 value = "${description.value}",
                 onValueChange = {
@@ -127,7 +130,8 @@ fun GameForm(
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedLabelColor = Color.Yellow,
-                    focusedBorderColor = Color.Yellow
+                    focusedBorderColor = Color.Yellow,
+                    backgroundColor = Color.Black
                 ),
                 value = "${score.value}",
                 onValueChange = {
@@ -143,7 +147,8 @@ fun GameForm(
                 },
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedLabelColor = Color.Yellow,
-                    focusedBorderColor = Color.Yellow
+                    focusedBorderColor = Color.Yellow,
+                    backgroundColor = Color.Black
                 ),
                 value = "${price.value}",
                 onValueChange = {

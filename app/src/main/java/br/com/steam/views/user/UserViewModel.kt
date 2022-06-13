@@ -9,7 +9,6 @@ import java.lang.IllegalArgumentException
 
 class UserViewModel(private val dao: UserDao): ViewModel(){
 
-    val allUsers: LiveData<List<UserSteam>> = dao.getUsers().asLiveData()
     val allUserWithGames: LiveData<List<UserWithGames>> = dao.getUsersWithGames().asLiveData()
 
     fun insert(userSteam: UserSteam){
@@ -31,9 +30,11 @@ class UserViewModel(private val dao: UserDao): ViewModel(){
     }
 
     fun getUser(id: Int): UserSteam{
-        allUsers.value?.forEach{
-            if(id == it.userId){
-                return it
+
+
+        allUserWithGames.value?.forEach{
+            if(id == it.userSteam.userId){
+                return it.userSteam
             }
         }
         return UserSteam(
@@ -46,7 +47,7 @@ class UserViewModel(private val dao: UserDao): ViewModel(){
     }
 
     fun getLastIndex(): Int{
-        return allUsers.value?.get(allUsers.value?.size?:0)?.userId?:0
+        return allUserWithGames.value?.get(allUserWithGames.value?.size?:0)?.userSteam?.userId?:0
     }
 }
 

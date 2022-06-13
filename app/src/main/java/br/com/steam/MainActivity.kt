@@ -26,8 +26,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import br.com.steam.data.daos.GameUserCrossRefDao
 import br.com.steam.data.models.Category
 import br.com.steam.data.models.Game
+import br.com.steam.data.models.GameUserCrossRef
 import br.com.steam.data.models.UserSteam
 import br.com.steam.ui.theme.SteamTheme
 import br.com.steam.views.category.*
@@ -65,6 +67,14 @@ class MainActivity : ComponentActivity() {
         val saveEditGameViewModel: SaveEditGameViewModel by viewModels()
         saveEditGameViewModel.setIndex(gameViewModel.getLastIndex())
 
+        //GameUserViewModel
+        val gameUserViewModel: GameUserViewModel by viewModels<GameUserViewModel>{
+            GameUserViewModelFactory(
+                (this.applicationContext as SteamApplication).steamDatabase.gameUserCrossRefDao()
+            )
+        }
+
+
         setContent {
             SteamTheme {
                 Surface(
@@ -77,7 +87,8 @@ class MainActivity : ComponentActivity() {
                         categoriesViewModel,
                         saveEditCategoriesViewModel,
                         gameViewModel,
-                        saveEditGameViewModel
+                        saveEditGameViewModel,
+                        gameUserViewModel
                     )
                 }
             }
@@ -92,7 +103,8 @@ fun SteamApp(
     categoriesViewModel: CategoriesViewModel,
     saveEditCategoriesViewModel: SaveEditCategoriesViewModel,
     gameViewModel: GameViewModel,
-    saveEditGameViewModel: SaveEditGameViewModel
+    saveEditGameViewModel: SaveEditGameViewModel,
+    gameUserViewModel: GameUserViewModel
 ) {
     val navController = rememberNavController()
     Scaffold(

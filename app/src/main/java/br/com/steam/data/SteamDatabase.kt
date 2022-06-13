@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import br.com.steam.data.daos.CategoryDao
 import br.com.steam.data.daos.GameDao
+import br.com.steam.data.daos.GameUserCrossRefDao
 import br.com.steam.data.daos.UserDao
 import br.com.steam.data.models.Category
 import br.com.steam.data.models.Game
@@ -22,6 +23,7 @@ abstract class SteamDatabase: RoomDatabase(){
     abstract fun categoryDao(): CategoryDao
     abstract fun gameDao(): GameDao
     abstract fun userSteamDao(): UserDao
+    abstract fun gameUserCrossRefDao(): GameUserCrossRefDao
 
     companion object {
 

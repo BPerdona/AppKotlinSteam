@@ -25,7 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import br.com.steam.data.models.Game
 import br.com.steam.data.models.UserSteam
+import br.com.steam.data.models.UserWithGames
 
 @Composable
 fun UserScreen(
@@ -41,7 +43,7 @@ fun UserScreen(
             }
         }
     ) {
-        val users by userViewModel.allUsers.observeAsState(listOf())
+        val users by userViewModel.allUserWithGames.observeAsState(listOf())
 
         Column() {
             UserList(users, navController)
@@ -51,13 +53,13 @@ fun UserScreen(
 
 @Composable
 fun UserList(
-    user: List<UserSteam>,
+    user: List<UserWithGames>,
     navController: NavController
 ){
     LazyColumn(){
         items(user){ user ->
-            UserItem(user){
-                navController.navigate("users/${user.userId}")
+            UserItem(user.userSteam, user.games){
+                navController.navigate("users/${user.userSteam.userId}")
             }
         }
     }
@@ -66,6 +68,7 @@ fun UserList(
 @Composable
 fun UserItem(
     user: UserSteam,
+    games: List<Game>,
     edit: () -> Unit
 ){
     var expanded by remember { mutableStateOf(false)}
@@ -121,7 +124,7 @@ fun UserItem(
                 if(expanded){
                     Icon(
                         modifier = Modifier
-                            .padding(0.dp,0.dp,20.dp,0.dp)
+                            .padding(0.dp, 0.dp, 20.dp, 0.dp)
                             .size(32.dp)
                             .clickable { edit() },
                         imageVector = Icons.Default.Edit,
@@ -181,12 +184,29 @@ fun UserItem(
                         modifier = Modifier.padding(0.dp,0.dp,0.dp,10.dp)
                     )
                     Text(
+                        modifier = Modifier.padding(bottom = 8.dp),
                         text = "Jogos de ${user.nickName}:",
                         style = MaterialTheme.typography.subtitle1.copy(color = Color.White, fontWeight = FontWeight.Bold)
                     )
-                    //TODO: Adicionar todos os jogos do usuario
+                    ShowUserGames(games)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ShowUserGames(games: List<Game>){
+    if(games.isNullOrEmpty()){
+        Text(
+            text = "Esse usuário não tem jogos na conta!!!",
+            style = MaterialTheme.typography.subtitle2.copy(color = Color.Red, fontWeight = FontWeight.Bold)
+        )
+    }else{
+        games.forEach{
+            Text(
+                text = "- ${it.name}"
+            )
         }
     }
 }
