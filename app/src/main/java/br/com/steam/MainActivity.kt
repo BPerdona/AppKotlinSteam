@@ -35,6 +35,8 @@ import br.com.steam.ui.theme.SteamTheme
 import br.com.steam.views.category.*
 import br.com.steam.views.game.*
 import br.com.steam.views.user.*
+import br.com.steam.views.usergame.AddRemoveGamesUser
+import br.com.steam.views.usergame.AddRemoveGamesUserViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +75,7 @@ class MainActivity : ComponentActivity() {
                 (this.applicationContext as SteamApplication).steamDatabase.gameUserCrossRefDao()
             )
         }
+        val addRemoveGamesUserViewModel: AddRemoveGamesUserViewModel by viewModels()
 
 
         setContent {
@@ -88,7 +91,8 @@ class MainActivity : ComponentActivity() {
                         saveEditCategoriesViewModel,
                         gameViewModel,
                         saveEditGameViewModel,
-                        gameUserViewModel
+                        gameUserViewModel,
+                        addRemoveGamesUserViewModel
                     )
                 }
             }
@@ -104,7 +108,8 @@ fun SteamApp(
     saveEditCategoriesViewModel: SaveEditCategoriesViewModel,
     gameViewModel: GameViewModel,
     saveEditGameViewModel: SaveEditGameViewModel,
-    gameUserViewModel: GameUserViewModel
+    gameUserViewModel: GameUserViewModel,
+    addRemoveGamesUserViewModel: AddRemoveGamesUserViewModel
 ) {
     val navController = rememberNavController()
     Scaffold(
@@ -161,12 +166,29 @@ fun SteamApp(
                 })
             ){
                 val userId = it.arguments?.getInt("userId") ?: -1
-                val user = userViewModel.getUser(userId)
+                val user = userViewModel.getUserWithGames(userId)
                 SaveEditUser(
                     user,
                     userViewModel,
                     navController,
                     saveEditUserViewModel
+                )
+            }
+            composable(
+                route = "users/{userId}/addGame",
+                arguments = listOf(navArgument("userId"){
+                    defaultValue = -1
+                    type = NavType.IntType
+                })
+            ){
+                val userId = it.arguments?.getInt("userId") ?: -1
+                val userWithGames = userViewModel.getUserWithGames(userId)
+                AddRemoveGamesUser(
+                    userWithGames,
+                    gameViewModel,
+                    navController,
+                    gameUserViewModel,
+                    addRemoveGamesUserViewModel
                 )
             }
             composable(

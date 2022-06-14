@@ -29,20 +29,21 @@ class UserViewModel(private val dao: UserDao): ViewModel(){
         }
     }
 
-    fun getUser(id: Int): UserSteam{
-
-
+    fun getUserWithGames(id: Int): UserWithGames{
         allUserWithGames.value?.forEach{
             if(id == it.userSteam.userId){
-                return it.userSteam
+                return it
             }
         }
-        return UserSteam(
-            -1,
-            "",
-            "",
-            0.0,
-            0
+        return UserWithGames(
+            UserSteam(
+                -1,
+                "",
+                "",
+                0.0,
+                0
+            ),
+            listOf()
         )
     }
 

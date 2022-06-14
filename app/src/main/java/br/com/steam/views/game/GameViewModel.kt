@@ -10,6 +10,7 @@ import java.lang.IllegalArgumentException
 class GameViewModel(private val dao: GameDao) : ViewModel(){
 
     val allGameWithCategory: LiveData<List<GameWithCategory>> = dao.getGamesWithCategory().asLiveData()
+    val allGames: LiveData<List<Game>> = dao.getGames().asLiveData()
 
     fun insert(game: Game){
         viewModelScope.launch {
