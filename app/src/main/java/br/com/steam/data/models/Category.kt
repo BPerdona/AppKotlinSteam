@@ -1,6 +1,7 @@
 package br.com.steam.data.models
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "category")

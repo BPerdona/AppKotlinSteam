@@ -1,8 +1,6 @@
 package br.com.steam
 
 import android.os.Bundle
-import android.util.Log
-import android.util.LogPrinter
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -26,7 +24,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import br.com.steam.data.daos.GameUserCrossRefDao
 import br.com.steam.data.models.Category
 import br.com.steam.data.models.Game
 import br.com.steam.data.models.GameUserCrossRef
@@ -112,6 +109,13 @@ fun SteamApp(
     addRemoveGamesUserViewModel: AddRemoveGamesUserViewModel
 ) {
     val navController = rememberNavController()
+
+    //Para começar iniciar o App com dados descomente essa linha na primeira inicialização
+    // e retorne a comenta-la depois!
+
+    //addData(categoriesViewModel, gameViewModel, userViewModel, gameUserViewModel)
+
+
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -201,7 +205,9 @@ fun SteamApp(
                 val category = categoriesViewModel.getCategory(
                     it.arguments?.getInt("categoryId") ?: -1
                 )
+                val canDelete = categoriesViewModel.categoryHasChildren(category.categoryId)
                 SaveEditCategory(
+                    cantDelete = canDelete,
                     category = category,
                     categoryViewModel = categoriesViewModel,
                     navController = navController,
@@ -244,4 +250,193 @@ sealed class Screen(
     object CategoriesScreen: Screen("categories", R.drawable.chart, R.string.categories)
     object GamesScreen: Screen("games", R.drawable.gamepad, R.string.games)
     object UsersScreen: Screen("users", R.drawable.user, R.string.users)
+}
+
+//Função para inicializar banco de dados
+fun addData(
+    categoriesViewModel: CategoriesViewModel,
+    gameViewModel: GameViewModel,
+    userViewModel: UserViewModel,
+    gameUserViewModel: GameUserViewModel,
+){
+    //Categorias
+    val cat1 = Category(
+        1,
+        "FPS",
+        "First Person Shooter (Tiro em Primeira Pessoa)."
+    )
+    categoriesViewModel.insert(cat1)
+    val cat2 = Category(
+        2,
+        "Terror",
+        "Voltado para terror psicológico e diversos JumpScares."
+    )
+    categoriesViewModel.insert(cat2)
+    val cat3 = Category(
+        3,
+        "Drama",
+        "Uma história incrivel está a sua espera, muitas vezes triste ou sofrida!"
+    )
+    categoriesViewModel.insert(cat3)
+    val cat4 = Category(
+        4,
+        "Estratégia",
+        "Voltado para pessoas que adoram pensar enquanto jogam para fazer as melhores escolhar."
+    )
+    categoriesViewModel.insert(cat4)
+    val cat5 = Category(
+        5,
+        "Corrida",
+        "Muita velocidade envolvida e será necesário ter bons reflexos."
+    )
+    categoriesViewModel.insert(cat5)
+    val cat6 = Category(
+        6,
+        "RPG",
+        "Role Play Game. Focado em criação de personagem e evoluir itens, armas e niveis."
+    )
+    categoriesViewModel.insert(cat6)
+
+    //Games
+    val game1 = Game(
+        1,
+        "Counter Strike",
+        "Um time Terrorista contra um time Contra-Terrorista.",
+        "8.9",
+        "19.99",
+        1
+    )
+    gameViewModel.insert(game1)
+    val game2 = Game(
+        2,
+        "God Of War",
+        "Kratos quer vingança pelo o que os deuses do Olympus fizeram com ele.",
+        "9.4",
+        "119.99",
+        3
+    )
+    gameViewModel.insert(game2)
+    val game3 = Game(
+        3,
+        "GRIS",
+        "Uma história sobre uma garota e seu Luto.",
+        "9.1",
+        "12.50",
+        3
+    )
+    gameViewModel.insert(game3)
+    val game4 = Game(
+        4,
+        "Half-Life",
+        "Gordon Freeman precisa sobreviver a um acidente radioativo e a invasão de alienigenas.",
+        "9.8",
+        "4.99",
+        1
+    )
+    gameViewModel.insert(game4)
+    val game5 = Game(
+        5,
+        "Silent Hill",
+        "Terror Psicológico e uma experiência no purgatório.",
+        "8.9",
+        "19.99",
+        2
+    )
+    gameViewModel.insert(game5)
+    val game6 = Game(
+        6,
+        "World Of Warcraft",
+        "Um universo gigantesco e fantasioso está a sua espera!",
+        "9.9",
+        "149.00",
+        6
+    )
+    gameViewModel.insert(game6)
+
+    //Usuários
+    val user1 = UserSteam(
+        1,
+        "PrN",
+        "Adoro jogos diferentes",
+        2042.91,
+        41,
+    )
+    userViewModel.insert(user1)
+    val user2 = UserSteam(
+        2,
+        "Monster2231",
+        "Just For Fun >=D",
+        282.00,
+        11,
+    )
+    userViewModel.insert(user2)
+    val user3 = UserSteam(
+        3,
+        "SkateBoy",
+        "O-<--<]:",
+        1273.01,
+        33,
+    )
+    userViewModel.insert(user3)
+    val user4 = UserSteam(
+        4,
+        "AroundTheWorld",
+        "I love play games and travels",
+        12.66,
+        5,
+    )
+    userViewModel.insert(user4)
+    val user5 = UserSteam(
+        5,
+        "NooB69",
+        "Preciso de um trabalho...",
+        14542.97,
+        97,
+    )
+    userViewModel.insert(user5)
+    val user6 = UserSteam(
+        6,
+        "NewUser8803",
+        "Hi I'm using Steam",
+        0.0,
+        1,
+    )
+    userViewModel.insert(user6)
+
+    //GamesUser
+    val gu1 = GameUserCrossRef(
+        1,
+        4
+    )
+    gameUserViewModel.insert(gu1)
+    val gu2 = GameUserCrossRef(
+        2,
+        5
+    )
+    gameUserViewModel.insert(gu2)
+    val gu3 = GameUserCrossRef(
+        3,
+        6
+    )
+    gameUserViewModel.insert(gu3)
+    val gu4 = GameUserCrossRef(
+        4,
+        2
+    )
+    gameUserViewModel.insert(gu4)
+    val gu5 = GameUserCrossRef(
+        5,
+        1
+    )
+    gameUserViewModel.insert(gu5)
+    val gu6 = GameUserCrossRef(
+        5,
+        2
+    )
+    gameUserViewModel.insert(gu6)
+    val gu7 = GameUserCrossRef(
+        5,
+        3
+    )
+    gameUserViewModel.insert(gu7)
 }

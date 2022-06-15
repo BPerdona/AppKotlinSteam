@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import br.com.steam.data.daos.CategoryDao
 import br.com.steam.data.models.Category
 import br.com.steam.data.models.CategoryWithGames
+import br.com.steam.data.models.GameWithCategory
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
@@ -45,6 +46,17 @@ class CategoriesViewModel(private val dao: CategoryDao): ViewModel(){
 
     fun getLastIndex(): Int{
         return allCategoriesWithGames.value?.get(allCategoriesWithGames.value?.size?:0)?.category?.categoryId ?: 0
+    }
+
+    fun categoryHasChildren(id: Int): Boolean{
+        if(id<=0)
+            return false
+        allCategoriesWithGames.value?.forEach {
+            if(it.category.categoryId == id)
+                if(it?.games.isNullOrEmpty())
+                    return false
+        }
+        return true
     }
 }
 

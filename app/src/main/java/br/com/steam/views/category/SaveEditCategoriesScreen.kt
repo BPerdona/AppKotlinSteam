@@ -9,18 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import br.com.steam.data.models.Category
-import br.com.steam.views.user.castDouble
-import br.com.steam.views.user.castInt
 
 @Composable
 fun SaveEditCategory(
     category: Category,
     categoryViewModel: CategoriesViewModel,
     navController: NavController,
-    saveEditCategoriesViewModel: SaveEditCategoriesViewModel
+    saveEditCategoriesViewModel: SaveEditCategoriesViewModel,
+    cantDelete: Boolean
 ){
     Scaffold(
         floatingActionButton = {
@@ -42,7 +42,8 @@ fun SaveEditCategory(
         CategoryForm(
             saveEditCategoriesViewModel,
             categoryViewModel,
-            category
+            category,
+            cantDelete
         ){
             navController.navigate("categories")
         }
@@ -54,6 +55,7 @@ fun CategoryForm(
     saveEditCategoriesViewModel: SaveEditCategoriesViewModel,
     categoryViewModel: CategoriesViewModel,
     category: Category,
+    cantDelete: Boolean,
     navBack: () -> Unit
 ) {
     val name = saveEditCategoriesViewModel.name.observeAsState()
@@ -68,6 +70,15 @@ fun CategoryForm(
                 .fillMaxWidth()
                 .padding(bottom = 14.dp),
         ) {
+            if(cantDelete)
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 9.dp),
+                    textAlign = TextAlign.Center,
+                    text = "Para deletar essa categoria, retire todos os jogos com ela!",
+                    style = MaterialTheme.typography.subtitle2.copy(color=Color.Red)
+                )
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,19 +112,20 @@ fun CategoryForm(
                 }
             )
         }
-        if (category.categoryId != -1) {
-            FloatingActionButton(
-                modifier = Modifier.padding(16.dp),
-                onClick = {
-                    categoryViewModel.delete(category)
-                    navBack()
+        if(!cantDelete)
+            if (category.categoryId != -1) {
+                FloatingActionButton(
+                    modifier = Modifier.padding(16.dp),
+                    onClick = {
+                        categoryViewModel.delete(category)
+                        navBack()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete"
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete"
-                )
             }
-        }
     }
 }

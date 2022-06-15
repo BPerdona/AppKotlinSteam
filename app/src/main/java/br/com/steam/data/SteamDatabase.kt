@@ -15,7 +15,7 @@ import br.com.steam.data.models.UserSteam
 
 @Database(
     entities = [Category::class, Game::class, UserSteam::class, GameUserCrossRef::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class SteamDatabase: RoomDatabase(){
